@@ -69,7 +69,7 @@ public class FactsOfLifeAgent extends Agent {
                             "The Content of the Message is::> " + Message_Content+"\n"+
                             "::: And Performative is:: " + Message_Performative);
                 //Reply to the Message
-                if (Message_Performative.equals("REQUEST")&& Message_Content.equals("Tell me some interesting fact")) {
+                if (Message_Performative.equals("REQUEST")) {
 
                     ACLMessage out_msg = new ACLMessage(ACLMessage.INFORM);
                     out_msg.addReceiver(new AID(SenderName));
