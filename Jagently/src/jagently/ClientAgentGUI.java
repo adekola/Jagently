@@ -218,8 +218,7 @@ public class ClientAgentGUI extends javax.swing.JFrame {
                     agent.getLocalName(),
                     JOptionPane.OK_OPTION);
         } else {
-            Agent selectedAgent = (Agent)agentList.get(agentListBox.getSelectedIndex());
-            AID agentID = selectedAgent.getAID();
+            String selectedAgent = (String)agentList.get(agentListBox.getSelectedIndex());
             GuiEvent ev = new GuiEvent(this, ClientAgent.SEND_MESSAGE);
             ev.addParameter(selectedAgent);
             ev.addParameter(txtTopic.getText());

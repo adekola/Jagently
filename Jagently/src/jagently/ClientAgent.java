@@ -33,6 +33,7 @@ public class ClientAgent extends GuiAgent {
     public static final int SHUTDOWN_AGENT = 2;
     public static final int SEND_MESSAGE = 3;
     public static final int CREATE_AGENT = 4;
+    int agentCount = 0;
 
     Vector agentList;
     private int command = 0;
@@ -41,6 +42,7 @@ public class ClientAgent extends GuiAgent {
 
     protected void setup() {
 
+        agentList = new Vector();
         myGui = new ClientAgentGUI(this);
         myGui.setVisible(true);
 
@@ -66,35 +68,34 @@ public class ClientAgent extends GuiAgent {
 
         System.out.println("My name is " + getAID().getLocalName());
         //periodically check for fol-agents
-        
+
         /*
-        addBehaviour(new TickerBehaviour(this, 10000) {
-            protected void onTick() {
-                // Update the list of target agents
-                DFAgentDescription template = new DFAgentDescription();
-                ServiceDescription sd = new ServiceDescription();
-                sd.setType("FactsOfLifeAgent");
+         addBehaviour(new TickerBehaviour(this, 10000) {
+         protected void onTick() {
+         // Update the list of target agents
+         DFAgentDescription template = new DFAgentDescription();
+         ServiceDescription sd = new ServiceDescription();
+         sd.setType("FactsOfLifeAgent");
 
-                //TODO
-                //check for agents from different platforms and machines
-                template.addServices(sd);
-                try {
-                    DFAgentDescription[] result = DFService.search(myAgent, template);
-                    System.out.println("Found the following matching agents:");
-                    agentList = new AID[result.length];
-                    for (int i = 0; i < result.length; ++i) {
-                        agentList[i] = result[i].getName();
-                    }
-                    updateAgentList();
-                } catch (FIPAException fe) {
-                    fe.printStackTrace();
-                }
+         //TODO
+         //check for agents from different platforms and machines
+         template.addServices(sd);
+         try {
+         DFAgentDescription[] result = DFService.search(myAgent, template);
+         System.out.println("Found the following matching agents:");
+         agentList = new AID[result.length];
+         for (int i = 0; i < result.length; ++i) {
+         agentList[i] = result[i].getName();
+         }
+         updateAgentList();
+         } catch (FIPAException fe) {
+         fe.printStackTrace();
+         }
 
-                // Perform the request
-            }
-        });
-        */
-
+         // Perform the request
+         }
+         });
+         */
     }
 
     @Override
@@ -107,42 +108,39 @@ public class ClientAgent extends GuiAgent {
                 break;
             case SEND_MESSAGE:
                 //get message parameters from gui 
-                AID agent = (AID) ev.getParameter(0);
+                AID agent = new AID((String)ev.getParameter(0));
                 String msg = (String) ev.getParameter(1);
                 //set up the message to be sent
                 SendMessage sm = new SendMessage(msg, agent);
                 ReceiveMessage rm = new ReceiveMessage();
                 addBehaviour(sm);
-
                 addBehaviour(rm);
                 //do your message sending ish
                 break;
             case CREATE_AGENT:
-                try{
-                Object[] args = new Object[2];
-                jade.core.Runtime runtime1 = jade.core.Runtime.instance();
-                ProfileImpl p = new ProfileImpl(false);
-                String agentType = (String) ev.getParameter(0);
-                int numAgents = (int)ev.getParameter(1);
-                jade.wrapper.AgentContainer home = runtime1.createAgentContainer(p);
-                String className = mapAgentClassName(agentType);
                 try {
-                    Random r = new Random();
-                    for (int i = 0; i < numAgents; i++) {
-                        
-                        AgentController t2 = home.createNewAgent(String.format("%s:%s", agentType, r.nextInt(100)), className, args);
-                        t2.start();
-                        agentList.add(t2);
+                    Object[] args = new Object[2];
+                    jade.core.Runtime runtime1 = jade.core.Runtime.instance();
+                    ProfileImpl p = new ProfileImpl(false);
+                    jade.wrapper.AgentContainer home = runtime1.createAgentContainer(p);
+                    String agentType = (String) ev.getParameter(0);
+                    int numAgents = (int) ev.getParameter(1);
+                    String className = mapAgentClassName(agentType);
+                    try {
+                        Random r = new Random();
+                        for (int i = 0; i < numAgents; i++) {
+                            AgentController t2 = home.createNewAgent(String.format("%s:%s", agentType, agentCount++), className, args);
+                            agentList.add(t2.getName());
+                            t2.start();
+                        }
+                        updateAgentList();
+                    } catch (StaleProxyException ex) {
+                        Logger.getLogger(ClientAgent.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    updateAgentList();
-                } catch (StaleProxyException ex) {
-                    Logger.getLogger(ClientAgent.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (Exception ex) {
+                    System.out.println("Problem creating new agent");
+                    ex.printStackTrace();
                 }
-                }
-            catch (Exception ex){
-                 System.out.println("Problem creating new agent");
-                 System.err.println(ex.getMessage());
-            }
         }
     }
 
