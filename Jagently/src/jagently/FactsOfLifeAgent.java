@@ -12,6 +12,7 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
+import jagently.FactsOfLife.FactTypes;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -73,7 +74,8 @@ public class FactsOfLifeAgent extends Agent {
 
                     ACLMessage out_msg = new ACLMessage(ACLMessage.INFORM);
                     out_msg.addReceiver(new AID(SenderName));
-                    out_msg.setContent((new FactsOfLife()).getFact());
+                    FactTypes t = mapFactsRequest(Message_Content);
+                    out_msg.setContent(FactsOfLife.getFact(t));
                     send(out_msg);
                     System.out.println("****I Replied to::> " + SenderName+"***");
                     System.out.println("The Content of My Reply is:" + out_msg.getContent());
@@ -84,9 +86,38 @@ public class FactsOfLifeAgent extends Agent {
             }
 
         }
+        
+        FactTypes mapFactsRequest(String msg) {
+            FactTypes type = null;
+            switch (msg.toLowerCase()) {
+                case "world":
+                    type = FactTypes.WORLD;
+                    break;
+                case "movies":
+                    type = FactTypes.MOVIES;
+                    break;
+                case "politics":
+                    type = FactTypes.POLITICS;
+                    break;
+                case "technology":
+                    type = FactTypes.TECHNOLOGY;
+                    break;
+                case "random":
+                default:
+                    type = FactTypes.RANDOM;
+                    break;
+            }
+
+            return type;
+        }
     }
     
     protected void takeDown() {
+        try {
+            DFService.deregister(this);
+        } catch (FIPAException ex) {
+            Logger.getLogger(FactsOfLifeAgent.class.getName()).log(Level.SEVERE, null, ex);
+        }
         doDelete();
     }
 }
