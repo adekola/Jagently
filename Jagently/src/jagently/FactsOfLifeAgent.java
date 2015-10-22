@@ -46,7 +46,8 @@ public class FactsOfLifeAgent extends Agent {
 
     }
 
-    public class ReceiveMessage extends CyclicBehaviour {
+    public class ReceiveMessage extends CyclicBehaviour 
+    {
 
         // Variable to Hold the content of the received Message
         private String Message_Performative;

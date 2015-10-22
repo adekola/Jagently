@@ -40,6 +40,7 @@ public class ClientAgent extends GuiAgent {
     //why transient and protected stuff?
     transient protected ClientAgentGUI myGui;  // The gui
 
+    
     protected void setup() {
 
         agentList = new Vector();
