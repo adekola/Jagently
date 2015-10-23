@@ -20,10 +20,6 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;
-import jagently.ClientAgent;
-import jagently.ClientAgentGUI;
-import jagently.FactsOfLifeAgent;
-import jagently.QuotesAgent;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Random;
@@ -42,6 +38,7 @@ public class ControllerAgent extends GuiAgent {
     String targetHost;
     Integer portNumber;
     Integer agentCount = 0;
+    public static final int SHUTDOWN_AGENT = 0;
     public static final int SAVE_TARGET_DETAILS = 1;
     public static final int CREATE_SUPERVISOR = 2;
     public static final int CREATE_PAWNS_ON_SUPERVISOR = 3;
@@ -105,7 +102,7 @@ public class ControllerAgent extends GuiAgent {
                         t2.start();
                         updateSupervisorsList();
                     } catch (StaleProxyException ex) {
-                        Logger.getLogger(ClientAgent.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(ControllerAgent.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 } catch (Exception ex) {
                     System.out.println("Problem creating new agent");
@@ -179,7 +176,7 @@ public class ControllerAgent extends GuiAgent {
         try {
             DFService.deregister(this);
         } catch (FIPAException ex) {
-            Logger.getLogger(ClientAgent.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ControllerAgent.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
