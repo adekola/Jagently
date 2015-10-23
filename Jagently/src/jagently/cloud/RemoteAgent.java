@@ -13,6 +13,7 @@ import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import jade.core.Runtime;
 import jade.core.behaviours.OneShotBehaviour;
+import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,8 +42,21 @@ public class RemoteAgent extends Agent {
             try {
 
                 Runtime rtClient = Runtime.instance();
-
-                Profile pClient = new ProfileImpl("52.30.231.116", 1099, null, false);
+                
+                
+                Profile pClient = new ProfileImpl(false);//("52.30.231.116", 1099, null, false);
+                
+                
+                pClient.setParameter(ProfileImpl.PLATFORM_ID, "platform"+1); 
+// ID range from 1 to 10 
+                pClient.setParameter(Profile.MAIN_HOST, "52.30.231.116");
+                pClient.setParameter(Profile.MAIN_PORT, "1099"); // available port 
+                pClient.setParameter(Profile.LOCAL_HOST, "jicp://172.30.0.79");
+                pClient.setParameter(Profile.LOCAL_PORT, "1099");
+                rtClient.instance().setCloseVM(false);
+                
+                
+//ContainerController mc = Runtime.instance().createMainContainer(pClient);
 
                 pClient.setParameter(Profile.CONTAINER_NAME, "newContainer");
 
