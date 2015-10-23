@@ -6,7 +6,6 @@
 package jagently.cloud;
 
 import jade.gui.GuiEvent;
-import jagently.ClientAgent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Vector;
@@ -45,7 +44,7 @@ public class ControllerGUI extends javax.swing.JFrame {
                 agent.getLocalName(),
                 JOptionPane.YES_NO_CANCEL_OPTION);
         if (rep == JOptionPane.YES_OPTION) {
-            GuiEvent ge = new GuiEvent(this, ClientAgent.SHUTDOWN_AGENT);
+            GuiEvent ge = new GuiEvent(this, ControllerAgent.SHUTDOWN_AGENT);
             agent.postGuiEvent(ge);
         }
     }
