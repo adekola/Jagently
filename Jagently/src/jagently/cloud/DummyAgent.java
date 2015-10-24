@@ -20,6 +20,9 @@ public class DummyAgent extends Agent {
    
    System.out.println("Hello I dont do much here anyways");
    }
-    
+   
+    public static void main(String args[]){
+}
+
     
 }
