@@ -14,7 +14,7 @@ import java.net.Socket;
  *
  * @author ameerah
  */
-public class RemoteAgentGui extends javax.swing.JPanel {
+public class RemoteAgentGui extends javax.swing.JFrame {
 
     /**
      * Creates new form RemoteAgentGui
