@@ -152,7 +152,7 @@ String buildCommand;
    //      java jade.Boot -container -container-name newContainer -host 52.30.6.110 -port 1099 R:jagently.cloud.RemoteAgent
 
         //building the command in command line;
-        buildCommand = "java" + " " + "jade.Boot" + " " + "-container" + " " + "-container-name" + " " + nameOfContainer + " " + "-host" + " " + ipOfHost + " " + "-port" + " " + port + " " + nameOfAgent + ":" + "jagently.cloud.SupervisorAgent";
+        buildCommand = "java" + " " + "jade.Boot" + " " + "-container" + " " + "-container-name" + " " + nameOfContainer + " " + "-host" + " " + ipOfHost + " " + "-port" + " " + port + " " + nameOfAgent + ":" + "jagently.cloud.DummyAgent";
         RemoteAgent remoteAgentCall = new RemoteAgent();
         remoteAgentCall.executeCommand(buildCommand);
     }//GEN-LAST:event_createAgentActionPerformed
