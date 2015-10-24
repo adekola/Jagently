@@ -8,6 +8,10 @@ package jagently.cloud;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.TickerBehaviour;
+import jade.domain.DFService;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
@@ -43,6 +47,20 @@ public class PawnAgent extends Agent {
     */
 
     public void setup() {
+        DFAgentDescription dfd = new DFAgentDescription();
+        ServiceDescription sd = new ServiceDescription();
+        sd.setType("PawnAgent");
+        sd.setName(getName());
+        sd.setOwnership("Jagently");
+        sd.addOntologies("PawnAgent");
+        dfd.setName(getAID());
+        dfd.addServices(sd);
+        try {
+            DFService.register(this, dfd);
+        } catch (FIPAException e) {
+            System.err.println(getLocalName() + " registration with DF unsucceeded. Reason: " + e.getMessage());
+            doDelete();
+        }
         Object[] args = getArguments();
         supervisor = (AID) args[0];
         hostAddr = (String) args[1];
