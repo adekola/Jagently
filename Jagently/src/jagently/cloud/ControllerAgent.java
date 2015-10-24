@@ -44,8 +44,8 @@ public class ControllerAgent extends GuiAgent {
     public static final int SHUTDOWN_AGENT = 0;
     public static final int SAVE_TARGET_DETAILS = 1;
     public static final int CREATE_SUPERVISOR = 2;
-    public static final int CREATE_PAWNS_ON_SUPERVISOR = 3; 
-    public static final int KILL_CONTAINER = 4; 
+    public static final int CREATE_PAWNS_ON_SUPERVISOR = 3;
+    public static final int KILL_CONTAINER = 4;
 
     HashMap<String, Integer> globalAgentsCount;
     private int command = 0;
@@ -104,19 +104,35 @@ public class ControllerAgent extends GuiAgent {
                     Object[] args = new Object[2];
                     //we'll fix in here the part of creating agents remotely which you're working to fix...
                     String supervisorAddy = (String) ev.getParameter(0);
-                    jade.core.Runtime runtime1 = jade.core.Runtime.instance();
-                    ProfileImpl p = new ProfileImpl(false);
-                    jade.wrapper.AgentContainer home = runtime1.createAgentContainer(p);
-                    AgentController t2 = null;
-                    try {
-                        t2 = home.createNewAgent(String.format("%s:%s", "SupervisorAgent", agentCount++), SupervisorAgent.class.getName(), args);
-                        supervisorsList.put(t2.getName(), null);
-                        t2.start();
-                        updateSupervisorsList();
+
+                    /*
+                     jade.core.Runtime runtime1 = jade.core.Runtime.instance();
+                     ProfileImpl p = new ProfileImpl(false);
+                     jade.wrapper.AgentContainer home = runtime1.createAgentContainer(p);
+                     AgentController t2 = null;
+                     try {
+                     t2 = home.createNewAgent(String.format("%s:%s", "SupervisorAgent", agentCount++), SupervisorAgent.class.getName(), args);
+                     supervisorsList.put(t2.getName(), null);
+                     t2.start();
+                     updateSupervisorsList();
                         
-                    } catch (StaleProxyException ex) {
-                        Logger.getLogger(ControllerAgent.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                     } catch (StaleProxyException ex) {
+                     Logger.getLogger(ControllerAgent.class.getName()).log(Level.SEVERE, null, ex);
+                     }
+                            
+                     */
+                    StringBuffer result = new StringBuffer();
+
+                    // System.out.println("Before socket connection");
+                    String port = "1099";
+                    String nameOfAgent = "Supervisor";
+       
+                    //building the command in command line;
+                    String buildCommand = "java" + " " + "jade.Boot" + " " + "-container" + " " + "-host" + " " + supervisorAddy + " " + "-port" + " " + port + " " + nameOfAgent + ":" + "jagently.cloud.SupervisorAgent";
+                    RemoteAgentCreator remoteAgentCall = new RemoteAgentCreator();
+                    remoteAgentCall.executeCommand(buildCommand);
+                    
+                    //do some kind of magic to compose what the AID of the freshly minted supervisor will be
                 } catch (Exception ex) {
                     System.out.println("Problem creating new agent");
                     ex.printStackTrace();
@@ -183,24 +199,22 @@ public class ControllerAgent extends GuiAgent {
         }
     }
 
-    
     public class QuerySupervisorBehavior extends TickerBehaviour {
 
-
-        public QuerySupervisorBehavior(Agent a, long period){
+        public QuerySupervisorBehavior(Agent a, long period) {
             super(a, period);
         }
+
         @Override
         protected void onTick() {
-            for (String s: supervisorsList.keySet()){
-                ACLMessage msg =  new ACLMessage(ACLMessage.QUERY_IF);
+            for (String s : supervisorsList.keySet()) {
+                ACLMessage msg = new ACLMessage(ACLMessage.QUERY_IF);
                 msg.setContent("How many agents have you got in your domain?");
                 msg.addReceiver(new AID(s));
                 send(msg);
             }
         }
     }
-    
 
     public class KillContainerBehavior extends OneShotBehaviour {
 
@@ -281,7 +295,7 @@ public class ControllerAgent extends GuiAgent {
                         break;
                     case "AGREE":
                         //confirm death of said container, plus maybe the new number of agents from concerned supervisor
-                      
+
                         break;
                 }
                 //update the received message
@@ -295,14 +309,16 @@ public class ControllerAgent extends GuiAgent {
         }
     }
 
-    void updateAgentCount(){
+    void updateAgentCount() {
         int count = 0;
-        for (String s : globalAgentsCount.keySet()){
-            count+= globalAgentsCount.get(s);
+        for (String s : globalAgentsCount.keySet()) {
+            count += globalAgentsCount.get(s);
         }
         myGui.updateGlobalAgentCount(count);
     }
+
     //we could make use of a Cyclic Behavior to get the feedback from the Supervisors regarding the success or not of Pawns creation
+
     protected void takeDown() {
         //clear away the GUI and clean up after yourself :p
         if (myGui != null) {
