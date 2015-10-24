@@ -19,8 +19,8 @@ public class RemoteAgentGui extends javax.swing.JPanel {
     /**
      * Creates new form RemoteAgentGui
      */
-
     String buildCommand;
+
     public RemoteAgentGui() {
         initComponents();
     }
@@ -143,59 +143,66 @@ public class RemoteAgentGui extends javax.swing.JPanel {
     }//GEN-LAST:event_hostIPActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-    
-        StringBuffer result=new StringBuffer();
 
-        
-           // System.out.println("Before socket connection");
-            String ipOfHost = hostIP.getText();
-            String port =hostPort.getText();
-            String nameOfAgent=agentName.getText();
-            String nameOfContainer=containerName.getText();
-            String nameOfPlatform=platformName.getText();
-            RemoteAgentGui remoteAgent=new RemoteAgentGui();
+        StringBuffer result = new StringBuffer();
+
+        // System.out.println("Before socket connection");
+        String ipOfHost = hostIP.getText();
+        String port = hostPort.getText();
+        String nameOfAgent = agentName.getText();
+        String nameOfContainer = containerName.getText();
+        String nameOfPlatform = platformName.getText();
+        RemoteAgentGui remoteAgent = new RemoteAgentGui();
    //      java jade.Boot -container -container-name newContainer -host 52.30.6.110 -port 1099 R:jagently.cloud.RemoteAgent
-            
-            //building the command in command line;
-            buildCommand="java"+" "+ "jade.Boot"+" "+"-container"+" "+"-container-name"+" "+ nameOfContainer+" "+"-host"+" "+ipOfHost+" "+"-port"+" "+port+" "+ nameOfAgent+":"+"jagently.cloud.SupervisorAgent";
-          RemoteAgent  remoteAgentCall= new RemoteAgent();
-                  remoteAgentCall.executeCommand(buildCommand);
+
+        //building the command in command line;
+        buildCommand = "java" + " " + "jade.Boot" + " " + "-container" + " " + "-container-name" + " " + nameOfContainer + " " + "-host" + " " + ipOfHost + " " + "-port" + " " + port + " " + nameOfAgent + ":" + "jagently.cloud.SupervisorAgent";
+        RemoteAgent remoteAgentCall = new RemoteAgent();
+        remoteAgentCall.executeCommand(buildCommand);
          //   System.out.println("After socket connection");
-            //PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-           // BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-           // System.out.println("After Buffered readers");
-            //System.out.println("After getting streams");
-           
-                
-
-                
-                
-            
-
-              
-        
+        //PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+        // BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        // System.out.println("After Buffered readers");
+        //System.out.println("After getting streams");
 
 // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
-/*public void executeCommand(String buildCommand) {
 
-		StringBuffer output = new StringBuffer();
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+       
+         //</editor-fold>
 
-		Process p;
-		try {
-			p = java.lang.Runtime.getRuntime().exec(buildCommand);
-			p.waitFor();
-			BufferedReader reader = 
-                           new BufferedReader(new InputStreamReader(p.getInputStream()));
+         /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new RemoteAgentGui().setVisible(true);
+            }
+        });
+    }
 
-			String line = "";			
-			while ((line = reader.readLine())!= null) {
-				output.append(line + "\n");
-			}
+    /*public void executeCommand(String buildCommand) {
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}}*/
+     StringBuffer output = new StringBuffer();
+
+     Process p;
+     try {
+     p = java.lang.Runtime.getRuntime().exec(buildCommand);
+     p.waitFor();
+     BufferedReader reader = 
+     new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+     String line = "";			
+     while ((line = reader.readLine())!= null) {
+     output.append(line + "\n");
+     }
+
+     } catch (Exception e) {
+     e.printStackTrace();
+     }}*/
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField agentName;
@@ -210,4 +217,44 @@ public class RemoteAgentGui extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JTextField platformName;
     // End of variables declaration//GEN-END:variables
+
+ 
+
+               //Profile pClient = new ProfileImpl(false);
+    //pClient.setParameter(Profile.MAIN_HOST, "172.26.190.91");
+    //pClient.setParameter(Profile.MAIN_PORT, "1099");
+            /*try {
+
+     Runtime rtClient = Runtime.instance();
+                
+                
+     Profile pClient = new ProfileImpl(false);//("52.30.231.116", 1099, null, false);
+                
+                
+     pClient.setParameter(ProfileImpl.PLATFORM_ID, "platform"+1); 
+     // ID range from 1 to 10 
+     pClient.setParameter(Profile.MAIN_HOST, "52.30.231.116");
+     pClient.setParameter(Profile.MAIN_PORT, "1099"); // available port 
+     pClient.setParameter(Profile.LOCAL_HOST, "jicp://172.30.0.79");
+     pClient.setParameter(Profile.LOCAL_PORT, "1099");
+     rtClient.instance().setCloseVM(false);
+                
+                
+     //ContainerController mc = Runtime.instance().createMainContainer(pClient);
+
+     pClient.setParameter(Profile.CONTAINER_NAME, "newContainer");
+
+     AgentContainer ccAg = (AgentContainer) rtClient.createAgentContainer(pClient);
+
+     AgentController t2 = ccAg.createNewAgent(String.format("%s:%s", "SupervisorAgent", agentCount++), SupervisorAgent.class.getName(), null);
+
+     t2.start();
+
+     //controller=ccAg.createNewAgent("PawnAgent",PawnAgent.class.getName(),Object[] args);
+     //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+     } catch (StaleProxyException ex) {
+     Logger.getLogger(RemoteAgent.class.getName()).log(Level.SEVERE, null, ex);
+     }
+     }
+     */
 }
