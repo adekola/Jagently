@@ -15,6 +15,8 @@ import jade.core.Runtime;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,10 +38,40 @@ public class RemoteAgent extends Agent {
     public class CreateRemoteAgent extends OneShotBehaviour {
 
         public void action() {
+       
+        RemoteAgent remoteAgentExecute =new RemoteAgent();
+
+        }
+            
+             public void executeCommand(String command) {
+
+		StringBuffer output = new StringBuffer();
+
+		Process p;
+		try {
+			p = java.lang.Runtime.getRuntime().exec(command);
+			p.waitFor();
+			BufferedReader reader = 
+                           new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+			String line = "";			
+			while ((line = reader.readLine())!= null) {
+				output.append(line + "\n");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		//return output.toString();
+
+	}
+            
+            
                //Profile pClient = new ProfileImpl(false);
             //pClient.setParameter(Profile.MAIN_HOST, "172.26.190.91");
             //pClient.setParameter(Profile.MAIN_PORT, "1099");
-            try {
+            /*try {
 
                 Runtime rtClient = Runtime.instance();
                 
@@ -72,7 +104,7 @@ public class RemoteAgent extends Agent {
                 Logger.getLogger(RemoteAgent.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-
+*/
     }
 
 }

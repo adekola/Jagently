@@ -157,7 +157,7 @@ public class RemoteAgentGui extends javax.swing.JPanel {
    //      java jade.Boot -container -container-name newContainer -host 52.30.6.110 -port 1099 R:jagently.cloud.RemoteAgent
             
             //building the command in command line;
-            buildCommand="java"+" "+ "jade.Boot"+" "+"-container"+" "+"-container-name"+" "+ nameOfContainer+" "+"-host"+" "+ipOfHost+" "+"-port"+" "+port+" "+ nameOfAgent+":"+"jagently.cloud.RemoteAgent";
+            buildCommand="java"+" "+ "jade.Boot"+" "+"-container"+" "+"-container-name"+" "+ nameOfContainer+" "+"-host"+" "+ipOfHost+" "+"-port"+" "+port+" "+ nameOfAgent+":"+"jagently.cloud.SupervisorAgent";
            remoteAgent.executeCommand(buildCommand);
          //   System.out.println("After socket connection");
             //PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
