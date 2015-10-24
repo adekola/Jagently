@@ -158,7 +158,8 @@ public class RemoteAgentGui extends javax.swing.JPanel {
             
             //building the command in command line;
             buildCommand="java"+" "+ "jade.Boot"+" "+"-container"+" "+"-container-name"+" "+ nameOfContainer+" "+"-host"+" "+ipOfHost+" "+"-port"+" "+port+" "+ nameOfAgent+":"+"jagently.cloud.SupervisorAgent";
-           remoteAgent.executeCommand(buildCommand);
+          RemoteAgent  remoteAgentCall= new RemoteAgent();
+                  remoteAgentCall.executeCommand(buildCommand);
          //   System.out.println("After socket connection");
             //PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
            // BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -176,7 +177,7 @@ public class RemoteAgentGui extends javax.swing.JPanel {
 
 // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
-public void executeCommand(String buildCommand) {
+/*public void executeCommand(String buildCommand) {
 
 		StringBuffer output = new StringBuffer();
 
@@ -194,7 +195,7 @@ public void executeCommand(String buildCommand) {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-		}}
+		}}*/
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField agentName;

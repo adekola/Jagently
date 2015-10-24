@@ -24,24 +24,20 @@ import java.util.logging.Logger;
  *
  * @author ameerah
  */
-public class RemoteAgent extends Agent {
+public class RemoteAgent  {
 
     AgentController controller;
     int agentCount = 0;
 
-    public void setup() {
+    public static void main(String[] args) {
 
-        addBehaviour(new CreateRemoteAgent());
-
+       /// RemoteAgent remoteAgent=new RemoteAgent();//addBehaiour(new CreateRemoteAgent());
+        //remoteAgent.executeCommand(command);
     }
 
-    public class CreateRemoteAgent extends OneShotBehaviour {
+    
 
-        public void action() {
-       
-        RemoteAgent remoteAgentExecute =new RemoteAgent();
-
-        }
+        
             
              public void executeCommand(String command) {
 
@@ -107,4 +103,3 @@ public class RemoteAgent extends Agent {
 */
     }
 
-}
