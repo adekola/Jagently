@@ -148,7 +148,7 @@ String buildCommand;
         String nameOfAgent = agentName.getText();
         String nameOfContainer = containerName.getText();
         String nameOfPlatform = platformName.getText();
-        RemoteAgentGui remoteAgent = new RemoteAgentGui();
+       // RemoteAgentGui remoteAgent = new RemoteAgentGui();
    //      java jade.Boot -container -container-name newContainer -host 52.30.6.110 -port 1099 R:jagently.cloud.RemoteAgent
 
         //building the command in command line;
