@@ -130,6 +130,9 @@ public class ControllerAgent extends GuiAgent {
                     String buildCommand = "java" + " " + "jade.Boot" + " " + "-container" + " " +  "-container-name" + " "+ "Container" +" " + "-host" + " " + supervisorAddy + " " + "-port" + " " + port + " " + nameOfAgent + ":" + "jagently.cloud.SupervisorAgent";
                     
                    // String buildCommand = "java" + " " + "jade.Boot" + " " + "-gui" + " " + "-host" + " " + supervisorAddy + " " + "-port" + " " + port + " " + nameOfAgent + ":" + "jagently.cloud.SupervisorAgent";
+                    //String buildCommand = "java" + " " + "jade.Boot" + " " + "-container" + " " +  "-container-name" + " "+ "Container" +" " + "-host" + " " + supervisorAddy + " " + "-port" + " " + port + " " + nameOfAgent + ":" + "jagently.cloud.SupervisorAgent";
+                    
+                    String buildCommand = "java" + " " + "jade.Boot" + " " + "-gui" + " " + "-host" + " " + supervisorAddy + " " + "-port" + " " + port + " " + nameOfAgent + ":" + "jagently.cloud.SupervisorAgent";
                     RemoteAgentCreator remoteAgentCall = new RemoteAgentCreator();
                     remoteAgentCall.executeCommand(buildCommand);
                     //do some kind of magic to compose what the AID of the freshly minted supervisor will be
