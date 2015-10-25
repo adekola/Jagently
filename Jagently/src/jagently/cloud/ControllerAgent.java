@@ -35,7 +35,6 @@ import java.util.logging.Logger;
  */
 public class ControllerAgent extends GuiAgent {
 
-
     String targetHost;
     Integer portNumber;
     Integer agentCount = 0;
@@ -96,55 +95,57 @@ public class ControllerAgent extends GuiAgent {
                     Object[] args = new Object[3];
                     //we'll fix in here the part of creating agents remotely which you're working to fix...
                     String hostToCreateOn = (String) ev.getParameter(0);
-                    int numberOfAgents = (int)ev.getParameter(1);
-                    String interval = (String)ev.getParameter(2);
-                    String targetHost = (String)ev.getParameter(3);
-                    String targetPort = (String)ev.getParameter(4);
+                    int numberOfAgents = (int) ev.getParameter(1);
+                    String interval = (String) ev.getParameter(2);
+                    String targetHost = (String) ev.getParameter(3);
+                    String targetPort = (String) ev.getParameter(4);
 
-                    if (hostToCreateOn.equals("localhost") | hostToCreateOn.equals("127.0.0.1")) {
+                    /*
+                     if (hostToCreateOn.equals("localhost") | hostToCreateOn.equals("127.0.0.1")) {
 
-                        jade.core.Runtime runtime1 = jade.core.Runtime.instance();
-                        ProfileImpl p = new ProfileImpl(false);
-                        jade.wrapper.AgentContainer home = runtime1.createAgentContainer(p);
-                        AgentController t2 = null;
-                        args[0] = targetHost;
-                        args[1] = targetPort;
-                        args[2] = interval;
-                        try {
-                            for (int i=0; i<=numberOfAgents; i++){
-                                t2 = home.createNewAgent(String.format("%s:%s", "WorkerAgent", agentCount++), WorkerAgent.class.getName(), args);
-                                t2.start();
-                            }
-                        } catch (StaleProxyException ex) {
-                            Logger.getLogger(ControllerAgent.class.getName()).log(Level.SEVERE, null, ex);
-                        }
+                     jade.core.Runtime runtime1 = jade.core.Runtime.instance();
+                     ProfileImpl p = new ProfileImpl(false);
+                     jade.wrapper.AgentContainer home = runtime1.createAgentContainer(p);
+                     AgentController t2 = null;
+                     args[0] = targetHost;
+                     args[1] = targetPort;
+                     args[2] = interval;
+                     try {
+                     for (int i=0; i<=numberOfAgents; i++){
+                     t2 = home.createNewAgent(String.format("%s:%s", "WorkerAgent", agentCount++), WorkerAgent.class.getName(), args);
+                     t2.start();
+                     }
+                     } catch (StaleProxyException ex) {
+                     Logger.getLogger(ControllerAgent.class.getName()).log(Level.SEVERE, null, ex);
+                     }
 
-                    } else {
-                        String port = "1099";
-                        String nameOfAgent = "Worker";
-
-                        RemoteAgentCreator remoteAgentCall = new RemoteAgentCreator();
-                       
-                        StringBuilder agentList = new StringBuilder();
-                        String agentCreationOption = String.format("jagently.cloud.WorkerAgent\"(%s, %s ,%s)\"", targetHost, targetPort, interval);
-                        for(int i=0; i<= numberOfAgents; i++){
-                            //String buildCommand = "java" + " " + "jade.Boot" + " " + "-container" + " " + "-container-name" + " " + "Container" + " " + "-host" + " " + hostToCreateOn + " " + "-port" + " " + port + " " + nameOfAgent + ":" + String.format("jagently.cloud.WorkerAgent(%s, %s, %s)", targetHost, targetPort, interval);
-                            String agentid = String.format("Worker-%s", i); //Worker-0,1,2...
-                            String agentOption = String.format("%s:%s ", agentid, agentCreationOption); //Worker-0:jagently.cloud.WorkerAgent(x, y, z)
+                     }
+                     else {
                             
-                            agentList.append(agentOption);
-                        }
-                        
-                         String buildCommand = "java" + " " + "jade.Boot" + " " + "-container" + " " + "-container-name" + " " + "Container" + " "  + "-host" + " " + hostToCreateOn + " " + "-port" + " " + port + " " + agentCreationOption;
-                        
-                         remoteAgentCall.executeCommand(buildCommand);
-                        //building the command in command line;
-                        
-                        //put a check to see if the command was successful
-                        
-                       
+                     */
+                    String port = "1099";
+                    String nameOfAgent = "Worker";
+
+                    RemoteAgentCreator remoteAgentCall = new RemoteAgentCreator();
+
+                    StringBuilder agentList = new StringBuilder();
+                    String agentCreationOption = String.format("jagently.cloud.WorkerAgent\"(%s, %s ,%s)\"", targetHost, targetPort, interval);
+                    
+                    for (int i = 0; i <= numberOfAgents; i++) {
+                        //String buildCommand = "java" + " " + "jade.Boot" + " " + "-container" + " " + "-container-name" + " " + "Container" + " " + "-host" + " " + hostToCreateOn + " " + "-port" + " " + port + " " + nameOfAgent + ":" + String.format("jagently.cloud.WorkerAgent(%s, %s, %s)", targetHost, targetPort, interval);
+                        String agentid = String.format("%s-%s", nameOfAgent, i); //Worker-0,1,2...
+                        String agentOption = String.format("%s:%s ", agentid, agentCreationOption); //Worker-0:jagently.cloud.WorkerAgent(x, y, z)
+
+                        agentList.append(agentOption);
                     }
 
+                    String buildCommand = "java" + " " + "jade.Boot" + " " + "-container" + " " + "-container-name" + " " + "Container" + " " + "-host" + " " + hostToCreateOn + " " + "-port" + " " + port + " " + agentList.toString();
+
+                    
+                    remoteAgentCall.executeCommand(buildCommand);
+                        //building the command in command line;
+
+                        //put a check to see if the command was successful
                     // System.out.println("Before socket connection");
                     //do some kind of magic to compose what the AID of the freshly minted supervisor will be
                 } catch (Exception ex) {
