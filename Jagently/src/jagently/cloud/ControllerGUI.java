@@ -307,6 +307,7 @@ public class ControllerGUI extends javax.swing.JFrame {
         ev.addParameter(targetPort);
         agent.postGuiEvent(ev);
         
+        
         updateGlobalAgentCount(noOfAgents);
         
     }//GEN-LAST:event_jButton1ActionPerformed
