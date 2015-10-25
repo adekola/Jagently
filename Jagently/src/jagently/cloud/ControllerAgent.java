@@ -121,14 +121,23 @@ public class ControllerAgent extends GuiAgent {
 
                     } else {
                         String port = "1099";
-                        String nameOfAgent = "Supervisor";
+                        String nameOfAgent = "Worker";
 
                         RemoteAgentCreator remoteAgentCall = new RemoteAgentCreator();
+                       
+                        StringBuilder agentList = new StringBuilder();
+                        String agentCreationOption = String.format("jagently.cloud.WorkerAgent\"(%s, %s ,%s)\"", targetHost, targetPort, interval);
                         for(int i=0; i<= numberOfAgents; i++){
                             //String buildCommand = "java" + " " + "jade.Boot" + " " + "-container" + " " + "-container-name" + " " + "Container" + " " + "-host" + " " + hostToCreateOn + " " + "-port" + " " + port + " " + nameOfAgent + ":" + String.format("jagently.cloud.WorkerAgent(%s, %s, %s)", targetHost, targetPort, interval);
-                            String buildCommand = "java" + " " + "jade.Boot" + " " + "-container" + " " + "-container-name" + " " + String.format("Container:%s", i) + " "  + "-host" + " " + hostToCreateOn + " " + "-port" + " " + port + " " + nameOfAgent + ":" + String.format("jagently.cloud.WorkerAgent\"(%s, %s ,%s)\"", targetHost, targetPort, interval);
-                            remoteAgentCall.executeCommand(buildCommand);
+                            String agentid = String.format("Worker-%s", i); //Worker-0,1,2...
+                            String agentOption = String.format("%s:%s ", agentid, agentCreationOption); //Worker-0:jagently.cloud.WorkerAgent(x, y, z)
+                            
+                            agentList.append(agentOption);
                         }
+                        
+                         String buildCommand = "java" + " " + "jade.Boot" + " " + "-container" + " " + "-container-name" + " " + "Container" + " "  + "-host" + " " + hostToCreateOn + " " + "-port" + " " + port + " " + agentCreationOption;
+                        
+                         remoteAgentCall.executeCommand(buildCommand);
                         //building the command in command line;
                         
                         //put a check to see if the command was successful
