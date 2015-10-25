@@ -86,23 +86,19 @@ public class SupervisorAgent extends Agent {
                             args[3] = tickerInterval;
                             jade.core.Runtime runtime1 = jade.core.Runtime.instance();
                             ProfileImpl p = new ProfileImpl(false);
-                            //jade.wrapper.AgentContainer home = runtime1.createAgentContainer(p);
+                            jade.wrapper.AgentContainer home = runtime1.createAgentContainer(p);
 
                             String agentType = "pawn";
                             try {
                                 for (int i = 0; i < numberofAgents; i++) {
-
-                                    // just add ticker behavior for the specified number of agents at the specified interval, yea?
-                                    addBehaviour(new ClientAttack(myAgent, tickerInterval, urlAddr, portNumber));
-
-//AgentController t2 = home.createNewAgent(String.format("%s:%s", agentType, agentCount++), PawnAgent.class.getCanonicalName(), args);
+                                    AgentController t2 = home.createNewAgent(String.format("%s:%s", agentType, agentCount++), PawnAgent.class.getCanonicalName(), args);
                                     //String agentName = t2.getName();
                                     // agentID = getAID(t2.getName());
                                     // addressofPawn = ((PawnAgent) t2).here();
-                                    //t2.start();
+                                    t2.start();
                                 }
                                 
-                                agentCount+= numberofAgents;
+                               // agentCount+= numberofAgents;
                                 //containerList.add(home.getContainerName() + "@" + home.getName());
 
                                 // now, send a response to the controller with your list of containers
@@ -235,122 +231,11 @@ public class SupervisorAgent extends Agent {
 
         }
     }
+}
 
     
     /**
-     *
-     * @author ameerah
-     */
-    /*
-    public class PawnAgent extends Agent {
-
-        private AID supervisor;
-
-        String hostAddr;
-        int hostPort, tickerInterval;
-
-    //sorry, No constructors for agents :p
-    /*
-         public PawnAgent(String host, int port, int _tickerInterval) {
-         host = hostAddr;
-         hostPort = port;
-         tickerInterval = _tickerInterval;
-         }
-         
-        public void setup() {
-            DFAgentDescription dfd = new DFAgentDescription();
-            ServiceDescription sd = new ServiceDescription();
-            sd.setType("PawnAgent");
-            sd.setName(getName());
-            sd.setOwnership("Jagently");
-            sd.addOntologies("PawnAgent");
-            dfd.setName(getAID());
-            dfd.addServices(sd);
-            try {
-                DFService.register(this, dfd);
-            } catch (FIPAException e) {
-                System.err.println(getLocalName() + " registration with DF unsucceeded. Reason: " + e.getMessage());
-                doDelete();
-            }
-            Object[] args = getArguments();
-            supervisor = (AID) args[0];
-            hostAddr = (String) args[1];
-            hostPort = (int) args[2];
-            tickerInterval = (int) args[3];
-            addBehaviour(new ClientAttack(this, tickerInterval));
-
-        }
-
-        public class ClientAttack extends TickerBehaviour {
-
-            private String Message_Performative;
-            private String Message_Content;
-            private String SenderName;
-            private String MyPlan;
-            private HashMap<String, String> hashmap;
-
-            int number, temp;
-
-            public ClientAttack(Agent a, long interval) {
-                super(a, interval);
-            }
-            /*
-             public ClientAttack(Agent a, int port, String host) {
-             super(a, period);
-             this.url = url;
-             this.port = port;
-             }
-
-             
-            @Override
-            protected void onTick() {
-
-                Socket socket = null;
-                try {
-                    socket = new Socket(hostAddr, hostPort);
-                    if (socket != null) {
-                        System.out.println("Hi I just connected ");
-                        socket.close();
-                    }
-
-                } catch (IOException ex) {
-                    Logger.getLogger(PawnAgent.class.getName()).log(Level.SEVERE, null, ex);
-
-                }
-            //For the purposes of hacking these pieces together, let's just have the attack happen once the PawnAgent is created
-            /*
-                 ACLMessage msg = receive();
-                 if (msg != null) {
-
-                 Message_Performative = msg.getPerformative(msg.getPerformative());
-                 Message_Content = msg.getContent();
-                 try {
-                 hashmap = (HashMap) msg.getContentObject();
-
-                 if (hashmap.isEmpty()) {
-
-                 System.err.print("Freak Send me what to do !!!");
-
-                 } else {
-                 String url = hashmap.get("urlname").toString();
-                 String portNumber = hashmap.get("portNumber").toString();
-                 port = Integer.parseInt(portNumber);
-                 }
-                 } catch (UnreadableException ex) {
-                 Logger.getLogger(PawnAgent.class.getName()).log(Level.SEVERE, null, ex);
-                 }
-                 SenderName = msg.getSender().getName();
-
-                 System.out.println("***I Received a Message***" + "\n"
-                 + "The Sender Name is:" + SenderName + "\n"
-                 + "The Content of the Message is::> " + Message_Content + "\n"
-                 + "::: And Performative is:: " + Message_Performative);
-                 //Reply to the Message
-                 if (Message_Performative.equals("REQUEST") && Message_Content.equals("Attack")) {
-                 
-
-            }
-        }*/
+    
     }
     //For Hack's sake, let us skip this bit of code for a minute...and just get the PawnAgents to start attacking as soon as they're created
 
