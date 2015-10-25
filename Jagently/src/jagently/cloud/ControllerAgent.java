@@ -121,17 +121,17 @@ public class ControllerAgent extends GuiAgent {
                      }
                             
                      */
-                    StringBuffer result = new StringBuffer();
 
                     // System.out.println("Before socket connection");
                     String port = "1099";
                     String nameOfAgent = "Supervisor";
        
                     //building the command in command line;
-                    String buildCommand = "java" + " " + "jade.Boot" + " " + "-container" + " " + "-host" + " " + supervisorAddy + " " + "-port" + " " + port + " " + nameOfAgent + ":" + "jagently.cloud.SupervisorAgent";
+                    String buildCommand = "java" + " " + "jade.Boot" + " " + "-container" + " " +  "-container-name" + " "+ "Container" +" " + "-host" + " " + supervisorAddy + " " + "-port" + " " + port + " " + nameOfAgent + ":" + "jagently.cloud.SupervisorAgent";
+                    
+                   // String buildCommand = "java" + " " + "jade.Boot" + " " + "-gui" + " " + "-host" + " " + supervisorAddy + " " + "-port" + " " + port + " " + nameOfAgent + ":" + "jagently.cloud.SupervisorAgent";
                     RemoteAgentCreator remoteAgentCall = new RemoteAgentCreator();
                     remoteAgentCall.executeCommand(buildCommand);
-                    
                     //do some kind of magic to compose what the AID of the freshly minted supervisor will be
                 } catch (Exception ex) {
                     System.out.println("Problem creating new agent");
