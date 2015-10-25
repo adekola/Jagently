@@ -131,6 +131,9 @@ public class ControllerAgent extends GuiAgent {
                     
                    RemoteAgentCreator remoteAgentCall = new RemoteAgentCreator();
                     remoteAgentCall.executeCommand(buildCommand);
+                    String supervisorID = buildSupervisorID(supervisorAddy, nameOfAgent, port);
+                    supervisorsList.put(supervisorID, null);
+                    updateSupervisorsList();
                     //do some kind of magic to compose what the AID of the freshly minted supervisor will be
                 } catch (Exception ex) {
                     System.out.println("Problem creating new agent");
@@ -153,6 +156,9 @@ public class ControllerAgent extends GuiAgent {
 
     }
 
+    String buildSupervisorID(String address, String agentName, String port){
+        return agentName+"@"+address+":"+port+"/"+"JADE";
+    }
     void updateSupervisorsList() {
         myGui.updateAgentList(supervisorsList);
     }
