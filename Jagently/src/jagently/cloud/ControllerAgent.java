@@ -126,7 +126,7 @@ public class ControllerAgent extends GuiAgent {
                         RemoteAgentCreator remoteAgentCall = new RemoteAgentCreator();
                         for(int i=0; i<= numberOfAgents; i++){
                             //String buildCommand = "java" + " " + "jade.Boot" + " " + "-container" + " " + "-container-name" + " " + "Container" + " " + "-host" + " " + hostToCreateOn + " " + "-port" + " " + port + " " + nameOfAgent + ":" + String.format("jagently.cloud.WorkerAgent(%s, %s, %s)", targetHost, targetPort, interval);
-                            String buildCommand = "java" + " " + "jade.Boot" + " " + "-container" + " " + "-host" + " " + hostToCreateOn + " " + "-port" + " " + port + " " + nameOfAgent + ":" + String.format("jagently.cloud.WorkerAgent\"(%s, %s ,%s)\"", targetHost, targetPort, interval);
+                            String buildCommand = "java" + " " + "jade.Boot" + " " + "-container" + " " + "-container-name" + " " + String.format("Container:%s", i) + " "  + "-host" + " " + hostToCreateOn + " " + "-port" + " " + port + " " + nameOfAgent + ":" + String.format("jagently.cloud.WorkerAgent\"(%s, %s ,%s)\"", targetHost, targetPort, interval);
                             remoteAgentCall.executeCommand(buildCommand);
                         }
                         //building the command in command line;
