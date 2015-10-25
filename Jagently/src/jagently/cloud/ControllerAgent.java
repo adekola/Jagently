@@ -35,7 +35,6 @@ import java.util.logging.Logger;
  */
 public class ControllerAgent extends GuiAgent {
 
-    HashMap<String, Vector> supervisorsList;
 
     String targetHost;
     Integer portNumber;
@@ -43,18 +42,13 @@ public class ControllerAgent extends GuiAgent {
 
     public static final int SHUTDOWN_AGENT = 0;
     public static final int SAVE_TARGET_DETAILS = 1;
-    public static final int CREATE_SUPERVISOR = 2;
-    public static final int CREATE_PAWNS_ON_SUPERVISOR = 3;
-    public static final int KILL_CONTAINER = 4;
+    public static final int CREATE_AGENTS = 3;
 
-    HashMap<String, Integer> globalAgentsCount;
     private int command = 0;
     //why transient and protected stuff?
     transient protected ControllerGUI myGui;  // The gui
 
     protected void setup() {
-        globalAgentsCount = new HashMap<>();
-        supervisorsList = new HashMap<>();
         myGui = new ControllerGUI(this);
         myGui.setVisible(true);
 
@@ -78,8 +72,6 @@ public class ControllerAgent extends GuiAgent {
             doDelete();
         }
 
-        ReceiveSupervisorMessages rm = new ReceiveSupervisorMessages();
-        addBehaviour(rm);
         //addBehaviour(new QuerySupervisorBehavior(this, 5000));
         System.out.println("Hey! I'm " + getAID().getLocalName());
 
@@ -97,26 +89,32 @@ public class ControllerAgent extends GuiAgent {
                 targetHost = (String) ev.getParameter(0);
                 portNumber = (int) ev.getParameter(1);
                 break;
-            case CREATE_SUPERVISOR:
+            case CREATE_AGENTS:
                 //do all the supervisor creation thingy, with params
                 //... and now, do your thingy
                 try {
-                    Object[] args = new Object[2];
+                    Object[] args = new Object[3];
                     //we'll fix in here the part of creating agents remotely which you're working to fix...
-                    String supervisorAddy = (String) ev.getParameter(0);
+                    String hostToCreateOn = (String) ev.getParameter(0);
+                    int numberOfAgents = (int)ev.getParameter(1);
+                    String interval = (String)ev.getParameter(2);
+                    String targetHost = (String)ev.getParameter(3);
+                    String targetPort = (String)ev.getParameter(4);
 
-                    if (supervisorAddy.equals("localhost") | supervisorAddy.equals("127.0.0.1")) {
+                    if (hostToCreateOn.equals("localhost") | hostToCreateOn.equals("127.0.0.1")) {
 
                         jade.core.Runtime runtime1 = jade.core.Runtime.instance();
                         ProfileImpl p = new ProfileImpl(false);
                         jade.wrapper.AgentContainer home = runtime1.createAgentContainer(p);
                         AgentController t2 = null;
+                        args[0] = targetHost;
+                        args[1] = targetPort;
+                        args[2] = interval;
                         try {
-                            t2 = home.createNewAgent(String.format("%s:%s", "SupervisorAgent", agentCount++), SupervisorAgent.class.getName(), args);
-                            supervisorsList.put(t2.getName(), null);
-                            t2.start();
-                            updateSupervisorsList();
-
+                            for (int i=0; i<=numberOfAgents; i++){
+                                t2 = home.createNewAgent(String.format("%s:%s", "WorkerAgent", agentCount++), WorkerAgent.class.getName(), args);
+                                t2.start();
+                            }
                         } catch (StaleProxyException ex) {
                             Logger.getLogger(ControllerAgent.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -125,17 +123,16 @@ public class ControllerAgent extends GuiAgent {
                         String port = "1099";
                         String nameOfAgent = "Supervisor";
 
+                        RemoteAgentCreator remoteAgentCall = new RemoteAgentCreator();
+                        for(int i=0; i<= numberOfAgents; i++){
+                            String buildCommand = "java" + " " + "jade.Boot" + " " + "-container" + " " + "-container-name" + " " + "Container" + " " + "-host" + " " + hostToCreateOn + " " + "-port" + " " + port + " " + nameOfAgent + ":" + String.format("jagently.cloud.WorkerAgent(%s, %s, %s)", targetHost, targetPort, interval);
+                            remoteAgentCall.executeCommand(buildCommand);
+                        }
                         //building the command in command line;
-                        String buildCommand = "java" + " " + "jade.Boot" + " " + "-container" + " " + "-container-name" + " " + "Container" + " " + "-host" + " " + supervisorAddy + " " + "-port" + " " + port + " " + nameOfAgent + ":" + "jagently.cloud.SupervisorAgent";
-
+                        
                         //put a check to see if the command was successful
                         
-                        
-                        RemoteAgentCreator remoteAgentCall = new RemoteAgentCreator();
-                        remoteAgentCall.executeCommand(buildCommand);
-                        String supervisorID = buildSupervisorID(supervisorAddy, nameOfAgent, port);
-                        supervisorsList.put(supervisorID, null);
-                        updateSupervisorsList();
+                       
                     }
 
                     // System.out.println("Before socket connection");
@@ -145,181 +142,8 @@ public class ControllerAgent extends GuiAgent {
                     ex.printStackTrace();
                 }
                 break;
-            case CREATE_PAWNS_ON_SUPERVISOR:
-                //get the selected supervisor and the rest of what's needed to 
-                int numOfAgents = (int) ev.getParameter(0);
-                long tickInterval = (long) ev.getParameter(1);
-                AID supervisorAgentID = new AID((String) ev.getParameter(2));
-                SendInstructionSupervisor instructSuperVisor = new SendInstructionSupervisor(supervisorAgentID, numOfAgents, tickInterval);
-                addBehaviour(instructSuperVisor);
-                //addBehaviour(new QuerySupervisorBehavior());
-                break;
-            case KILL_CONTAINER:
-                //addBehaviour(new QuerySupervisorBehavior());
-                break;
         }
 
-    }
-
-    String buildSupervisorID(String address, String agentName, String port) {
-        return agentName + "@" + address + ":" + port + "/" + "JADE";
-    }
-
-    void updateSupervisorsList() {
-        myGui.updateAgentList(supervisorsList);
-    }
-
-    public class SendInstructionSupervisor extends OneShotBehaviour {
-
-        AID supervisorAgent;
-        Integer agentsToCreate;
-        Long tickInterval;
-
-        public SendInstructionSupervisor(AID _supervisorAgent, int _agentsToCreate, long _tickInterval) {
-            supervisorAgent = _supervisorAgent;
-            agentsToCreate = _agentsToCreate;
-            tickInterval = _tickInterval;
-        }
-
-        @Override
-        public void action() {
-
-            ACLMessage sendMessage = new ACLMessage(ACLMessage.REQUEST);
-            //HashMap hashmap=new HashMap();
-
-            //AID receiverSupervisor =new AID();
-            //receiverSupervisor.setName("R@Platform2");
-            //receiverSupervisor.addAddresses("http://arash-pc2:7778/acc");
-            //receiverSupervisor.setName();
-            //receiverSupervisor.setName(urlname);
-            //receiverSupervisor.addAddresses(urlname);
-            sendMessage.addReceiver(supervisorAgent);
-            sendMessage.setLanguage("English");
-
-            HashMap<String, String> hashmap = new HashMap<String, String>();
-            hashmap.put("urlname", targetHost);
-            hashmap.put("portNumber", portNumber.toString());
-            hashmap.put("numberofAgents", agentsToCreate.toString());
-            hashmap.put("tickerInterval", tickInterval.toString());
-            agentCount+=agentsToCreate;
-            updateAgentCount();
-            try {
-                sendMessage.setContentObject(hashmap);
-            } catch (IOException ex) {
-                Logger.getLogger(ControllerAgent.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            send(sendMessage);
-        }
-    }
-
-    public class QuerySupervisorBehavior extends TickerBehaviour {
-
-        public QuerySupervisorBehavior(Agent a, long period) {
-            super(a, period);
-        }
-
-        @Override
-        protected void onTick() {
-            for (String s : supervisorsList.keySet()) {
-                ACLMessage msg = new ACLMessage(ACLMessage.QUERY_IF);
-                msg.setContent("How many agents have you got in your domain?");
-                msg.addReceiver(new AID(s));
-                send(msg);
-            }
-        }
-    }
-
-    public class KillContainerBehavior extends OneShotBehaviour {
-
-        AID supervisorAgent;
-        String containerToKill;
-        Integer agentsToCreate;
-
-        public KillContainerBehavior(AID _supervisorAgent, String _containerToKill) {
-            supervisorAgent = _supervisorAgent;
-            containerToKill = _containerToKill;
-        }
-
-        @Override
-        public void action() {
-
-            ACLMessage message = new ACLMessage(ACLMessage.PROPOSE);
-            //HashMap hashmap=new HashMap();
-
-            //AID receiverSupervisor =new AID();
-            //receiverSupervisor.setName("R@Platform2");
-            //receiverSupervisor.addAddresses("http://arash-pc2:7778/acc");
-            //receiverSupervisor.setName();
-            //receiverSupervisor.setName(urlname);
-            //receiverSupervisor.addAddresses(urlname);
-            message.addReceiver(supervisorAgent);
-            message.setLanguage("English");
-
-            HashMap<String, String> hashmap = new HashMap<String, String>();
-            hashmap.put("containerID", containerToKill);
-            try {
-                message.setContentObject(hashmap);
-            } catch (IOException ex) {
-                Logger.getLogger(ControllerAgent.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            send(message);
-        }
-    }
-
-    public class ReceiveSupervisorMessages extends CyclicBehaviour {
-
-        // Variable to Hold the content of the received Message
-        private String Message_Performative;
-        private String Message_Content;
-        private String SenderName;
-        private String MyPlan;
-
-        private HashMap<String, Vector> message;
-
-        public void action() {
-            ACLMessage msg = receive();
-            if (msg != null) {
-
-                Message_Performative = msg.getPerformative(msg.getPerformative());
-                Message_Content = msg.getContent();
-                SenderName = msg.getSender().getName();
-
-                switch (Message_Performative) {
-                    case "CONFIRM": {
-                        try {
-                            //get the content of created containers  and do the needful
-                            message = (HashMap) msg.getContentObject();
-                            Vector v = (Vector) message.get("containers");
-                            supervisorsList.put(SenderName, v);
-                            updateSupervisorsList();
-                        } catch (UnreadableException ex) {
-                            Logger.getLogger(ControllerAgent.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-
-                    }
-
-                    break;
-                    case "INFORM":
-                        //get the content of the status update - no of agents, list of containers etc. and do the needful
-                        int agentCount = Integer.parseInt(Message_Content);
-                        globalAgentsCount = new HashMap<>();
-                        globalAgentsCount.put(SenderName, agentCount);
-                        updateAgentCount();
-                        break;
-                    case "AGREE":
-                        //confirm death of said container, plus maybe the new number of agents from concerned supervisor
-
-                        break;
-                }
-                //update the received message
-                //TODO: refactor this to a more re-usable form
-                //updateMessageReceived(Message_Content);
-            } else {
-                //what exactly does this block thingy do?
-                block();
-            }
-
-        }
     }
 
     void updateAgentCount() {
