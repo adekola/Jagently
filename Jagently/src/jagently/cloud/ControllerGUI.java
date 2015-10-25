@@ -31,6 +31,10 @@ public class ControllerGUI extends javax.swing.JFrame {
         setTitle("Client Agent - " + agent.getLocalName());
         initComponents();
 
+        txtTargetHost.setText("localhost");
+        
+        txtTargetPort.setText("9090");
+        
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 shutDown();

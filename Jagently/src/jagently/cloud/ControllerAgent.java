@@ -80,7 +80,7 @@ public class ControllerAgent extends GuiAgent {
 
         ReceiveSupervisorMessages rm = new ReceiveSupervisorMessages();
         addBehaviour(rm);
-        addBehaviour(new QuerySupervisorBehavior(this, 2000));
+        //addBehaviour(new QuerySupervisorBehavior(this, 5000));
         System.out.println("Hey! I'm " + getAID().getLocalName());
 
     }
@@ -105,35 +105,40 @@ public class ControllerAgent extends GuiAgent {
                     //we'll fix in here the part of creating agents remotely which you're working to fix...
                     String supervisorAddy = (String) ev.getParameter(0);
 
-                    /*
-                     jade.core.Runtime runtime1 = jade.core.Runtime.instance();
-                     ProfileImpl p = new ProfileImpl(false);
-                     jade.wrapper.AgentContainer home = runtime1.createAgentContainer(p);
-                     AgentController t2 = null;
-                     try {
-                     t2 = home.createNewAgent(String.format("%s:%s", "SupervisorAgent", agentCount++), SupervisorAgent.class.getName(), args);
-                     supervisorsList.put(t2.getName(), null);
-                     t2.start();
-                     updateSupervisorsList();
+                    if (supervisorAddy.equals("localhost") | supervisorAddy.equals("127.0.0.1")) {
+
+                        jade.core.Runtime runtime1 = jade.core.Runtime.instance();
+                        ProfileImpl p = new ProfileImpl(false);
+                        jade.wrapper.AgentContainer home = runtime1.createAgentContainer(p);
+                        AgentController t2 = null;
+                        try {
+                            t2 = home.createNewAgent(String.format("%s:%s", "SupervisorAgent", agentCount++), SupervisorAgent.class.getName(), args);
+                            supervisorsList.put(t2.getName(), null);
+                            t2.start();
+                            updateSupervisorsList();
+
+                        } catch (StaleProxyException ex) {
+                            Logger.getLogger(ControllerAgent.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+
+                    } else {
+                        String port = "1099";
+                        String nameOfAgent = "Supervisor";
+
+                        //building the command in command line;
+                        String buildCommand = "java" + " " + "jade.Boot" + " " + "-container" + " " + "-container-name" + " " + "Container" + " " + "-host" + " " + supervisorAddy + " " + "-port" + " " + port + " " + nameOfAgent + ":" + "jagently.cloud.SupervisorAgent";
+
+                        //put a check to see if the command was successful
                         
-                     } catch (StaleProxyException ex) {
-                     Logger.getLogger(ControllerAgent.class.getName()).log(Level.SEVERE, null, ex);
-                     }
-                            
-                     */
+                        
+                        RemoteAgentCreator remoteAgentCall = new RemoteAgentCreator();
+                        remoteAgentCall.executeCommand(buildCommand);
+                        String supervisorID = buildSupervisorID(supervisorAddy, nameOfAgent, port);
+                        supervisorsList.put(supervisorID, null);
+                        updateSupervisorsList();
+                    }
 
                     // System.out.println("Before socket connection");
-                    String port = "1099";
-                    String nameOfAgent = "Supervisor";
-       
-                    //building the command in command line;
-                    String buildCommand = "java" + " " + "jade.Boot" + " " + "-container" + " " +  "-container-name" + " "+ "Container" +" " + "-host" + " " + supervisorAddy + " " + "-port" + " " + port + " " + nameOfAgent + ":" + "jagently.cloud.SupervisorAgent";
-                    
-                   RemoteAgentCreator remoteAgentCall = new RemoteAgentCreator();
-                    remoteAgentCall.executeCommand(buildCommand);
-                    String supervisorID = buildSupervisorID(supervisorAddy, nameOfAgent, port);
-                    supervisorsList.put(supervisorID, null);
-                    updateSupervisorsList();
                     //do some kind of magic to compose what the AID of the freshly minted supervisor will be
                 } catch (Exception ex) {
                     System.out.println("Problem creating new agent");
@@ -156,9 +161,10 @@ public class ControllerAgent extends GuiAgent {
 
     }
 
-    String buildSupervisorID(String address, String agentName, String port){
-        return agentName+"@"+address+":"+port+"/"+"JADE";
+    String buildSupervisorID(String address, String agentName, String port) {
+        return agentName + "@" + address + ":" + port + "/" + "JADE";
     }
+
     void updateSupervisorsList() {
         myGui.updateAgentList(supervisorsList);
     }
@@ -195,6 +201,8 @@ public class ControllerAgent extends GuiAgent {
             hashmap.put("portNumber", portNumber.toString());
             hashmap.put("numberofAgents", agentsToCreate.toString());
             hashmap.put("tickerInterval", tickInterval.toString());
+            agentCount+=agentsToCreate;
+            updateAgentCount();
             try {
                 sendMessage.setContentObject(hashmap);
             } catch (IOException ex) {
@@ -315,15 +323,10 @@ public class ControllerAgent extends GuiAgent {
     }
 
     void updateAgentCount() {
-        int count = 0;
-        for (String s : globalAgentsCount.keySet()) {
-            count += globalAgentsCount.get(s);
-        }
-        myGui.updateGlobalAgentCount(count);
+        myGui.updateGlobalAgentCount(agentCount);
     }
 
     //we could make use of a Cyclic Behavior to get the feedback from the Supervisors regarding the success or not of Pawns creation
-
     protected void takeDown() {
         //clear away the GUI and clean up after yourself :p
         if (myGui != null) {
