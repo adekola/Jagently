@@ -141,6 +141,7 @@ public class ControllerAgent extends GuiAgent {
 
                     String buildCommand = "java" + " " + "jade.Boot" + " " + "-container" + " " + "-container-name" + " " + "Container" + " " + "-host" + " " + hostToCreateOn + " " + "-port" + " " + port + " " + agentList.toString();
 
+                    System.out.println(buildCommand);
                     
                     remoteAgentCall.executeCommand(buildCommand);
                         //building the command in command line;
