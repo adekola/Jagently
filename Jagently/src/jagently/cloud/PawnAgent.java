@@ -46,12 +46,6 @@ import java.util.logging.Logger;
         int hostPort, tickerInterval;
 
     //sorry, No constructors for agents :p
-    
-         public PawnAgent(String host, int port, int _tickerInterval) {
-         host = hostAddr;
-         hostPort = port;
-         tickerInterval = _tickerInterval;
-         }
          
         public void setup() {
             DFAgentDescription dfd = new DFAgentDescription();
