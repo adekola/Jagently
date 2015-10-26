@@ -40,20 +40,21 @@ public class ControllerAgent extends GuiAgent {
     String targetHost;
     Integer portNumber;
     Integer agentCount = 0;
+    Integer localSupervisorCount = 0;
 
     public static final int SHUTDOWN_AGENT = 0;
     public static final int SAVE_TARGET_DETAILS = 1;
     public static final int GET_SUPERVISORS = 2;
     public static final int CREATE_PAWNS_ON_SUPERVISOR = 3;
-    public static final int KILL_CONTAINER = 4;
+    public static final int CREATE_LOCAL_SUPERVISOR = 4;
+    public static final int KILL_CONTAINER = 5;
 
-    HashMap<String, Integer> globalAgentsCount;
+    Integer globalAgentsCount = 0;
     private int command = 0;
     //why transient and protected stuff?
     transient protected ControllerGUI myGui;  // The gui
 
     protected void setup() {
-        globalAgentsCount = new HashMap<>();
         supervisorsList = new HashMap<>();
         myGui = new ControllerGUI(this);
         myGui.setVisible(true);
@@ -80,8 +81,29 @@ public class ControllerAgent extends GuiAgent {
 
         ReceiveSupervisorMessages rm = new ReceiveSupervisorMessages();
         addBehaviour(rm);
-        addBehaviour(new FetchSupervisorsBehavior(this, 5000));
-        //addBehaviour(new QuerySupervisorBehavior(this, 5000));
+        
+        
+        addBehaviour(new TickerBehaviour(this, 10000) {
+            @Override
+            protected void onTick() {
+                DFAgentDescription template = new DFAgentDescription();
+                ServiceDescription sd = new ServiceDescription();
+                sd.setType("SupervisorAgent");
+                template.addServices(sd);
+                DFAgentDescription[] result;
+                try {
+                    result = DFService.search(myAgent, template);
+                    for (int i = 0; i < result.length; i++) {
+                        supervisorsList.put(result[i].getName().getName(), null);
+                    }
+                } catch (FIPAException ex) {
+                    Logger.getLogger(ControllerAgent.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                updateSupervisorsList();
+            }
+        }); 
+        
+        addBehaviour(new GetAgentCountBehavior(this, 5000));
         System.out.println("Hey! I'm " + getAID().getLocalName());
 
     }
@@ -99,7 +121,7 @@ public class ControllerAgent extends GuiAgent {
                 portNumber = (int) ev.getParameter(1);
                 break;
             case GET_SUPERVISORS:
-                 DFAgentDescription template = new DFAgentDescription();
+                DFAgentDescription template = new DFAgentDescription();
                 ServiceDescription sd = new ServiceDescription();
                 sd.setType("SupervisorAgent");
                 template.addServices(sd);
@@ -112,7 +134,24 @@ public class ControllerAgent extends GuiAgent {
                 } catch (FIPAException fe) {
                     fe.printStackTrace();
                 }
-                
+                break;
+            case CREATE_LOCAL_SUPERVISOR:
+                jade.core.Runtime runtime1 = jade.core.Runtime.instance();
+                ProfileImpl p = new ProfileImpl(false);
+                jade.wrapper.AgentContainer home = this.getContainerController();
+
+                String agentType = "Supervisor";
+                Object[] args = null;
+
+                try {
+                    AgentController t2 = home.createNewAgent(String.format("%s:%s", agentType, localSupervisorCount++), SupervisorAgent.class.getCanonicalName(), args);
+                    t2.start();
+                    supervisorsList.put(t2.getName(), null);
+                    updateSupervisorsList();
+                } catch (StaleProxyException ex) {
+                    Logger.getLogger(ControllerAgent.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                break;
             case CREATE_PAWNS_ON_SUPERVISOR:
                 //get the selected supervisor and the rest of what's needed to 
                 int numOfAgents = (int) ev.getParameter(0);
@@ -169,7 +208,7 @@ public class ControllerAgent extends GuiAgent {
             hashmap.put("portNumber", portNumber.toString());
             hashmap.put("numberofAgents", agentsToCreate.toString());
             hashmap.put("tickerInterval", tickInterval.toString());
-            agentCount+=agentsToCreate;
+            agentCount += agentsToCreate;
             updateAgentCount();
             try {
                 sendMessage.setContentObject(hashmap);
@@ -180,31 +219,33 @@ public class ControllerAgent extends GuiAgent {
         }
     }
 
-    public class FetchSupervisorsBehavior extends TickerBehaviour{
+    public class GetAgentCountBehavior extends TickerBehaviour {
 
-        public FetchSupervisorsBehavior(Agent a, long period) {
+        public GetAgentCountBehavior(Agent a, long period) {
             super(a, period);
         }
 
         @Override
         protected void onTick() {
-            
+
             DFAgentDescription template = new DFAgentDescription();
             ServiceDescription sd = new ServiceDescription();
-            sd.setType("SupervisorAgent");
+            sd.setType("PawnAgent");
             template.addServices(sd);
             try {
                 DFAgentDescription[] result = DFService.search(myAgent, template);
-                for(int i=0;i< result.length; i++){
-                    supervisorsList.put(result[i].getName().getName(), null);
+
+                if (result != null) {
+                    globalAgentsCount = result.length;
                 }
-                updateSupervisorsList();
+
             } catch (FIPAException fe) {
                 fe.printStackTrace();
             }
         }
-        
+
     }
+
     public class QuerySupervisorBehavior extends TickerBehaviour {
 
         public QuerySupervisorBehavior(Agent a, long period) {
@@ -294,9 +335,6 @@ public class ControllerAgent extends GuiAgent {
                     break;
                     case "INFORM":
                         //get the content of the status update - no of agents, list of containers etc. and do the needful
-                        int agentCount = Integer.parseInt(Message_Content);
-                        globalAgentsCount = new HashMap<>();
-                        globalAgentsCount.put(SenderName, agentCount);
                         updateAgentCount();
                         break;
                     case "AGREE":

@@ -31,7 +31,7 @@ public class ControllerGUI extends javax.swing.JFrame {
         setTitle("Client Agent - " + agent.getLocalName());
         initComponents();
 
-        txtTargetHost.setText("localhost");
+        txtTargetHost.setText("johnbalanceryo-209782797.eu-west-1.elb.amazonaws.com");
         
         txtTargetPort.setText("9090");
         
@@ -83,9 +83,7 @@ public class ControllerGUI extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         btnCreateSupervisor = new javax.swing.JButton();
         lblSelectedSupervisor = new javax.swing.JLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        listboxContainerList = new javax.swing.JList();
-        jButton3 = new javax.swing.JButton();
+        btnCreateLocalSupervisors = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -127,6 +125,7 @@ public class ControllerGUI extends javax.swing.JFrame {
         jLabel4.setText("System Stats");
 
         lblTargetHostDetails.setText("{}");
+        lblTargetHostDetails.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
 
         lblAgentPopulation.setText("{}");
 
@@ -144,7 +143,7 @@ public class ControllerGUI extends javax.swing.JFrame {
         jLabel5.setFont(new java.awt.Font("Ubuntu", 1, 16)); // NOI18N
         jLabel5.setText("Supervisor Agents");
 
-        btnCreateSupervisor.setText("Get Supervisors");
+        btnCreateSupervisor.setText("List Remote Supervisors");
         btnCreateSupervisor.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCreateSupervisorActionPerformed(evt);
@@ -153,12 +152,10 @@ public class ControllerGUI extends javax.swing.JFrame {
 
         lblSelectedSupervisor.setText("{}");
 
-        jScrollPane2.setViewportView(listboxContainerList);
-
-        jButton3.setText("Kill Container");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        btnCreateLocalSupervisors.setText("Create Local Supervisor");
+        btnCreateLocalSupervisors.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                btnCreateLocalSupervisorsActionPerformed(evt);
             }
         });
 
@@ -170,42 +167,11 @@ public class ControllerGUI extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel2)
-                                    .addComponent(txtNoOfAgents, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel3)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(txtTickerInterval)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel5))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(lblSelectedSupervisor)
-                                            .addGroup(layout.createSequentialGroup()
-                                                .addComponent(jButton3)
-                                                .addGap(32, 32, 32)
-                                                .addComponent(btnCreateSupervisor, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                        .addGap(0, 0, Short.MAX_VALUE))))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel1)
-                                        .addGap(0, 0, Short.MAX_VALUE))
-                                    .addComponent(txtTargetHost))
+                                    .addComponent(jLabel1)
+                                    .addComponent(txtTargetHost, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
@@ -214,15 +180,39 @@ public class ControllerGUI extends javax.swing.JFrame {
                                         .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addComponent(jLabel6)))
                             .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel5)
+                                .addGap(150, 150, 150)
+                                .addComponent(lblSelectedSupervisor))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel2)
+                                        .addComponent(txtNoOfAgents, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addComponent(txtTickerInterval, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(jLabel3)))
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                    .addComponent(btnCreateLocalSupervisors)
+                                    .addGap(110, 110, 110)
+                                    .addComponent(btnCreateSupervisor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel4)
+                            .addGroup(layout.createSequentialGroup()
                                 .addComponent(lblTargetHostDetails2)
                                 .addGap(18, 18, 18)
-                                .addComponent(lblTargetHostDetails)
-                                .addGap(188, 188, 188)
+                                .addComponent(lblTargetHostDetails))
+                            .addGroup(layout.createSequentialGroup()
                                 .addComponent(lblTargetHostDetails3, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lblAgentPopulation)
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addContainerGap())))
+                                .addComponent(lblAgentPopulation)))
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -241,14 +231,11 @@ public class ControllerGUI extends javax.swing.JFrame {
                     .addComponent(jLabel5)
                     .addComponent(lblSelectedSupervisor))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButton3)
-                            .addComponent(btnCreateSupervisor)))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(7, 7, 7)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnCreateLocalSupervisors)
+                    .addComponent(btnCreateSupervisor))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
@@ -260,11 +247,13 @@ public class ControllerGUI extends javax.swing.JFrame {
                     .addComponent(jButton1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblTargetHostDetails)
+                    .addComponent(lblTargetHostDetails2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblAgentPopulation)
-                    .addComponent(lblTargetHostDetails2)
                     .addComponent(lblTargetHostDetails3))
                 .addContainerGap())
         );
@@ -287,7 +276,7 @@ public class ControllerGUI extends javax.swing.JFrame {
         if (!txtTargetPort.getText().isEmpty() & !txtTargetHost.getText().isEmpty()) {
             if (tryParseInt(txtTargetPort.getText())) {
                 port = Integer.parseInt(txtTargetPort.getText());
-                host = txtTargetHost.getText();
+                host = txtTargetHost.getText().toLowerCase();
                 GuiEvent ev = new GuiEvent(this, ControllerAgent.SAVE_TARGET_DETAILS);
                 ev.addParameter(host);
                 ev.addParameter(port);
@@ -339,20 +328,16 @@ public class ControllerGUI extends javax.swing.JFrame {
         //}
     }//GEN-LAST:event_btnCreateSupervisorActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void btnCreateLocalSupervisorsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateLocalSupervisorsActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
+        GuiEvent ev = new GuiEvent(this, ControllerAgent.CREATE_LOCAL_SUPERVISOR);
+        agent.postGuiEvent(ev);
+    }//GEN-LAST:event_btnCreateLocalSupervisorsActionPerformed
 
     private void listboxSupervisorListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listboxSupervisorListValueChanged
         // TODO add your handling code here:
-        Vector empty = new Vector();
         String selectedAgent = (String)listboxSupervisorList.getSelectedValue();
         lblSelectedSupervisor.setText(selectedAgent);
-        Vector v = agentList.get(selectedAgent);
-        if(v != null)
-            listboxContainerList.setListData(v);
-        else
-            listboxContainerList.setListData(empty);
     }//GEN-LAST:event_listboxSupervisorListValueChanged
 
     private boolean tryParseInt(String value) {
@@ -371,10 +356,10 @@ public class ControllerGUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCreateLocalSupervisors;
     private javax.swing.JButton btnCreateSupervisor;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -382,13 +367,11 @@ public class ControllerGUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lblAgentPopulation;
     private javax.swing.JLabel lblSelectedSupervisor;
     private javax.swing.JLabel lblTargetHostDetails;
     private javax.swing.JLabel lblTargetHostDetails2;
     private javax.swing.JLabel lblTargetHostDetails3;
-    private javax.swing.JList listboxContainerList;
     private javax.swing.JList listboxSupervisorList;
     private javax.swing.JTextField txtNoOfAgents;
     private javax.swing.JTextField txtTargetHost;
