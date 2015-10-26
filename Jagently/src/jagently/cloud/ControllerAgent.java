@@ -192,14 +192,7 @@ public class ControllerAgent extends GuiAgent {
         public void action() {
 
             ACLMessage sendMessage = new ACLMessage(ACLMessage.REQUEST);
-            //HashMap hashmap=new HashMap();
-
-            //AID receiverSupervisor =new AID();
-            //receiverSupervisor.setName("R@Platform2");
-            //receiverSupervisor.addAddresses("http://arash-pc2:7778/acc");
-            //receiverSupervisor.setName();
-            //receiverSupervisor.setName(urlname);
-            //receiverSupervisor.addAddresses(urlname);
+            
             sendMessage.addReceiver(supervisorAgent);
             sendMessage.setLanguage("English");
 
@@ -208,7 +201,7 @@ public class ControllerAgent extends GuiAgent {
             hashmap.put("portNumber", portNumber.toString());
             hashmap.put("numberofAgents", agentsToCreate.toString());
             hashmap.put("tickerInterval", tickInterval.toString());
-            agentCount += agentsToCreate;
+            hashmap.put("globalAgentCount", globalAgentsCount.toString());
             updateAgentCount();
             try {
                 sendMessage.setContentObject(hashmap);
@@ -354,7 +347,7 @@ public class ControllerAgent extends GuiAgent {
     }
 
     void updateAgentCount() {
-        myGui.updateGlobalAgentCount(agentCount);
+        myGui.updateGlobalAgentCount(globalAgentsCount);
     }
 
     //we could make use of a Cyclic Behavior to get the feedback from the Supervisors regarding the success or not of Pawns creation

@@ -45,7 +45,7 @@ public class SupervisorAgent extends Agent {
     //InetAddress address;
     int numberofAgents, tickerInterval, portNumber;
     Location addressofPawn;
-     int agentCount = 0;
+     int globalAgentCount = 0;
 
     public void setup() {
         
@@ -94,6 +94,7 @@ public class SupervisorAgent extends Agent {
                             portNumber = Integer.parseInt(message.get("portNumber"));
                             numberofAgents = Integer.parseInt(message.get("numberofAgents"));
                             tickerInterval = Integer.parseInt(message.get("tickerInterval"));
+                            globalAgentCount = Integer.parseInt(message.get("globalAgentCount"));
                             Object[] args = new Object[4];
                             //the Order of these parameters is extremely important
                             args[0] = this.getAgent().getAID();
@@ -107,14 +108,14 @@ public class SupervisorAgent extends Agent {
                             String agentType = "pawn";
                             try {
                                 for (int i = 0; i < numberofAgents; i++) {
-                                    AgentController t2 = home.createNewAgent(String.format("%s:%s", agentType, agentCount++), PawnAgent.class.getCanonicalName(), args);
+                                    AgentController t2 = home.createNewAgent(String.format("%s:%s", agentType, ++globalAgentCount + i), PawnAgent.class.getCanonicalName(), args);
                                     //String agentName = t2.getName();
                                     // agentID = getAID(t2.getName());
                                     // addressofPawn = ((PawnAgent) t2).here();
                                     t2.start();
                                 }
                                 
-                               // agentCount+= numberofAgents;
+                               // globalAgentCount+= numberofAgents;
                                 //containerList.add(home.getContainerName() + "@" + home.getName());
 
                                 // now, send a response to the controller with your list of containers
@@ -132,7 +133,7 @@ public class SupervisorAgent extends Agent {
                             break;
                         case ACLMessage.QUERY_IF:
                             //get the number of Pawn Agents in the current environment
-                            Integer agentsPopulation = agentCount;
+                            Integer agentsPopulation = globalAgentCount;
                             ACLMessage out_msg = new ACLMessage(ACLMessage.INFORM);
                             out_msg.addReceiver(new AID(SenderName));
                             out_msg.setContent(agentsPopulation.toString());
