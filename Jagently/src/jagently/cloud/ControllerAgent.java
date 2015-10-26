@@ -43,7 +43,7 @@ public class ControllerAgent extends GuiAgent {
 
     public static final int SHUTDOWN_AGENT = 0;
     public static final int SAVE_TARGET_DETAILS = 1;
-    public static final int CREATE_SUPERVISOR = 2;
+    public static final int GET_SUPERVISORS = 2;
     public static final int CREATE_PAWNS_ON_SUPERVISOR = 3;
     public static final int KILL_CONTAINER = 4;
 
@@ -98,6 +98,21 @@ public class ControllerAgent extends GuiAgent {
                 targetHost = (String) ev.getParameter(0);
                 portNumber = (int) ev.getParameter(1);
                 break;
+            case GET_SUPERVISORS:
+                 DFAgentDescription template = new DFAgentDescription();
+                ServiceDescription sd = new ServiceDescription();
+                sd.setType("SupervisorAgent");
+                template.addServices(sd);
+                try {
+                    DFAgentDescription[] result = DFService.search(this, template);
+                    for (int i = 0; i < result.length; i++) {
+                        supervisorsList.put(result[i].getName().getName(), null);
+                    }
+                    updateSupervisorsList();
+                } catch (FIPAException fe) {
+                    fe.printStackTrace();
+                }
+                
             case CREATE_PAWNS_ON_SUPERVISOR:
                 //get the selected supervisor and the rest of what's needed to 
                 int numOfAgents = (int) ev.getParameter(0);

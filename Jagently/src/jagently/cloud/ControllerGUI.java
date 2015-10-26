@@ -145,7 +145,7 @@ public class ControllerGUI extends javax.swing.JFrame {
         jLabel5.setFont(new java.awt.Font("Ubuntu", 1, 16)); // NOI18N
         jLabel5.setText("Supervisor Agents");
 
-        btnCreateSupervisor.setText("Create Supervisor at:");
+        btnCreateSupervisor.setText("Get Supervisors");
         btnCreateSupervisor.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCreateSupervisorActionPerformed(evt);
@@ -203,11 +203,10 @@ public class ControllerGUI extends javax.swing.JFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(lblSelectedSupervisor)
-                                        .addGap(0, 0, Short.MAX_VALUE))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jButton3))))
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(lblSelectedSupervisor)
+                                            .addComponent(jButton3))
+                                        .addGap(0, 0, Short.MAX_VALUE))))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
@@ -339,9 +338,7 @@ public class ControllerGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
         //let's first create supervisor at a specific address.
         // if(!txtSupervisorAddress.getText().isEmpty()){
-        String supervisorAddy = txtSupervisorAddress.getText();
-        GuiEvent ev = new GuiEvent(this, ControllerAgent.CREATE_SUPERVISOR);
-        ev.addParameter(supervisorAddy);
+        GuiEvent ev = new GuiEvent(this, ControllerAgent.GET_SUPERVISORS);
         agent.postGuiEvent(ev);
         //}
     }//GEN-LAST:event_btnCreateSupervisorActionPerformed
