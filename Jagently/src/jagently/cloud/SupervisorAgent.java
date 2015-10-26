@@ -101,6 +101,7 @@ public class SupervisorAgent extends Agent {
                             args[1] = urlAddr;
                             args[2] = portNumber;
                             args[3] = tickerInterval;
+                            
                             jade.core.Runtime runtime1 = jade.core.Runtime.instance();
                             ProfileImpl p = new ProfileImpl(false);
                             jade.wrapper.AgentContainer home = runtime1.createAgentContainer(p);

@@ -39,7 +39,6 @@ public class ControllerAgent extends GuiAgent {
 
     String targetHost;
     Integer portNumber;
-    Integer agentCount = 0;
     Integer localSupervisorCount = 0;
 
     public static final int SHUTDOWN_AGENT = 0;
