@@ -108,8 +108,9 @@ public class SupervisorAgent extends Agent {
 
                             String agentType = "pawn";
                             try {
+                                Random id = new Random();
                                 for (int i = 0; i < numberofAgents; i++) {
-                                    AgentController t2 = home.createNewAgent(String.format("%s:%s", agentType, ++globalAgentCount + i), PawnAgent.class.getCanonicalName(), args);
+                                    AgentController t2 = home.createNewAgent(String.format("%s:%s", agentType, id.nextInt()), PawnAgent.class.getCanonicalName(), args);
                                     //String agentName = t2.getName();
                                     // agentID = getAID(t2.getName());
                                     // addressofPawn = ((PawnAgent) t2).here();
