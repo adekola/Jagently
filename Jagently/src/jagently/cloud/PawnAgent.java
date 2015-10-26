@@ -92,7 +92,7 @@ import java.util.logging.Logger;
 
                 Socket socket = null;
                 try {
-                    socket = new Socket(hostAddr, hostPort);
+                    socket = new Socket("JohnBalancerYO-209782797.eu-west-1.elb.amazonaws.com", hostPort);
                     if (socket != null) {
                         System.out.println("Hi I just connected ");
                         socket.close();

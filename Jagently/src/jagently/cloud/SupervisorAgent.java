@@ -213,84 +213,20 @@ public class SupervisorAgent extends Agent {
                 Logger.getLogger(SupervisorAgent.class.getName()).log(Level.SEVERE, null, ex);
 
             }
-            //For the purposes of hacking these pieces together, let's just have the attack happen once the PawnAgent is created
-            /*
-             ACLMessage msg = receive();
-             if (msg != null) {
-
-             Message_Performative = msg.getPerformative(msg.getPerformative());
-             Message_Content = msg.getContent();
-             try {
-             hashmap = (HashMap) msg.getContentObject();
-
-             if (hashmap.isEmpty()) {
-
-             System.err.print("Freak Send me what to do !!!");
-
-             } else {
-             String url = hashmap.get("urlname").toString();
-             String portNumber = hashmap.get("portNumber").toString();
-             port = Integer.parseInt(portNumber);
-             }
-             } catch (UnreadableException ex) {
-             Logger.getLogger(PawnAgent.class.getName()).log(Level.SEVERE, null, ex);
-             }
-             SenderName = msg.getSender().getName();
-
-             System.out.println("***I Received a Message***" + "\n"
-             + "The Sender Name is:" + SenderName + "\n"
-             + "The Content of the Message is::> " + Message_Content + "\n"
-             + "::: And Performative is:: " + Message_Performative);
-             //Reply to the Message
-             if (Message_Performative.equals("REQUEST") && Message_Content.equals("Attack")) {
-             */
-
+           
+        }
+    }
+    
+     protected void takeDown() {
+        //clear away the GUI and clean up after yourself :p
+        try {
+            DFService.deregister(this);
+            doDelete();
+        } catch (FIPAException ex) {
+            Logger.getLogger(ControllerAgent.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
 
     
-    /**
-    
-    }
-    //For Hack's sake, let us skip this bit of code for a minute...and just get the PawnAgents to start attacking as soon as they're created
-
-    /*
-     public class DispatchPawnInstruction extends CyclicBehaviour {
-
-     private String Message_Performative;
-     private String Message_Content;
-     private String SenderName;
-     private String MyPlan;
-     private Object object;
-
-     @Override
-     public void action() {
-     ACLMessage dispatchMessage = new ACLMessage(ACLMessage.REQUEST);
-
-     try {
-     ACLMessage sendMessage = new ACLMessage(ACLMessage.REQUEST);
-     HashMap<String, String> hashmap = new HashMap<String, String>();
-     hashmap.put("urlname", urlAddr);
-     hashmap.put("portNumber", portNumber);
-     // hashmap.put("", url);
-
-     sendMessage.setContentObject(hashmap);
-     sendMessage.setContent("Attack");
-     AID receiverPawn = new AID(agentName, AID.ISGUID);
-
-     receiverPawn.setName(agentName);
-     receiverPawn.addAddresses(addressofPawn.getAddress());
-
-     dispatchMessage.addReceiver(receiverPawn);
-     send(sendMessage);
-
-     } catch (IOException ex) {
-     Logger.getLogger(ControllerAgent.class.getName()).log(Level.SEVERE, null, ex);
-     }
-
-     //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-     }
-     //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-     }
-     */
+   
