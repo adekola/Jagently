@@ -39,6 +39,7 @@ public class ControllerAgent extends GuiAgent {
 
     String targetHost;
     Integer portNumber;
+    Integer agentCount = 0;
     Integer localSupervisorCount = 0;
 
     public static final int SHUTDOWN_AGENT = 0;
@@ -207,7 +208,7 @@ public class ControllerAgent extends GuiAgent {
             hashmap.put("portNumber", portNumber.toString());
             hashmap.put("numberofAgents", agentsToCreate.toString());
             hashmap.put("tickerInterval", tickInterval.toString());
-            hashmap.put("globalAgentCount", globalAgentsCount.toString());
+            agentCount += agentsToCreate;
             updateAgentCount();
             try {
                 sendMessage.setContentObject(hashmap);
@@ -353,7 +354,7 @@ public class ControllerAgent extends GuiAgent {
     }
 
     void updateAgentCount() {
-        myGui.updateGlobalAgentCount(globalAgentsCount);
+        myGui.updateGlobalAgentCount(agentCount);
     }
 
     //we could make use of a Cyclic Behavior to get the feedback from the Supervisors regarding the success or not of Pawns creation
