@@ -80,6 +80,7 @@ public class ControllerAgent extends GuiAgent {
 
         ReceiveSupervisorMessages rm = new ReceiveSupervisorMessages();
         addBehaviour(rm);
+        addBehaviour(new FetchSupervisorsBehavior(this, 5000));
         //addBehaviour(new QuerySupervisorBehavior(this, 5000));
         System.out.println("Hey! I'm " + getAID().getLocalName());
 
@@ -96,54 +97,6 @@ public class ControllerAgent extends GuiAgent {
             case SAVE_TARGET_DETAILS:
                 targetHost = (String) ev.getParameter(0);
                 portNumber = (int) ev.getParameter(1);
-                break;
-            case CREATE_SUPERVISOR:
-                //do all the supervisor creation thingy, with params
-                //... and now, do your thingy
-                try {
-                    Object[] args = new Object[2];
-                    //we'll fix in here the part of creating agents remotely which you're working to fix...
-                    String supervisorAddy = (String) ev.getParameter(0);
-
-                    if (supervisorAddy.equals("localhost") | supervisorAddy.equals("127.0.0.1")) {
-
-                        jade.core.Runtime runtime1 = jade.core.Runtime.instance();
-                        ProfileImpl p = new ProfileImpl(false);
-                        jade.wrapper.AgentContainer home = runtime1.createAgentContainer(p);
-                        AgentController t2 = null;
-                        try {
-                            t2 = home.createNewAgent(String.format("%s:%s", "SupervisorAgent", agentCount++), SupervisorAgent.class.getName(), args);
-                            supervisorsList.put(t2.getName(), null);
-                            t2.start();
-                            updateSupervisorsList();
-
-                        } catch (StaleProxyException ex) {
-                            Logger.getLogger(ControllerAgent.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-
-                    } else {
-                        String port = "1099";
-                        String nameOfAgent = "Supervisor";
-
-                        //building the command in command line;
-                        String buildCommand = "java" + " " + "jade.Boot" + " " + "-container" + " " + "-container-name" + " " + "Container" + " " + "-host" + " " + supervisorAddy + " " + "-port" + " " + port + " " + nameOfAgent + ":" + "jagently.cloud.SupervisorAgent";
-
-                        //put a check to see if the command was successful
-                        
-                        
-                        RemoteAgentCreator remoteAgentCall = new RemoteAgentCreator();
-                        remoteAgentCall.executeCommand(buildCommand);
-                        String supervisorID = buildSupervisorID(supervisorAddy, nameOfAgent, port);
-                        supervisorsList.put(supervisorID, null);
-                        updateSupervisorsList();
-                    }
-
-                    // System.out.println("Before socket connection");
-                    //do some kind of magic to compose what the AID of the freshly minted supervisor will be
-                } catch (Exception ex) {
-                    System.out.println("Problem creating new agent");
-                    ex.printStackTrace();
-                }
                 break;
             case CREATE_PAWNS_ON_SUPERVISOR:
                 //get the selected supervisor and the rest of what's needed to 
@@ -212,6 +165,31 @@ public class ControllerAgent extends GuiAgent {
         }
     }
 
+    public class FetchSupervisorsBehavior extends TickerBehaviour{
+
+        public FetchSupervisorsBehavior(Agent a, long period) {
+            super(a, period);
+        }
+
+        @Override
+        protected void onTick() {
+            
+            DFAgentDescription template = new DFAgentDescription();
+            ServiceDescription sd = new ServiceDescription();
+            sd.setType("SupervisorAgent");
+            template.addServices(sd);
+            try {
+                DFAgentDescription[] result = DFService.search(myAgent, template);
+                for(int i=0;i< result.length; i++){
+                    supervisorsList.put(result[i].getName().getName(), null);
+                }
+                updateSupervisorsList();
+            } catch (FIPAException fe) {
+                fe.printStackTrace();
+            }
+        }
+        
+    }
     public class QuerySupervisorBehavior extends TickerBehaviour {
 
         public QuerySupervisorBehavior(Agent a, long period) {

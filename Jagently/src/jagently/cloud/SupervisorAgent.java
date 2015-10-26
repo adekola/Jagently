@@ -48,6 +48,22 @@ public class SupervisorAgent extends Agent {
      int agentCount = 0;
 
     public void setup() {
+        
+        
+        DFAgentDescription dfd = new DFAgentDescription();
+        ServiceDescription sd = new ServiceDescription();
+        sd.setType("SupervisorAgent");
+        sd.setName(getName());
+        sd.setOwnership("Jagently");
+        sd.addOntologies("SupervisorAgent");
+        dfd.setName(getAID());
+        dfd.addServices(sd);
+        try {
+            DFService.register(this, dfd);
+        } catch (FIPAException e) {
+            System.err.println(getLocalName() + " registration with DF unsucceeded. Reason: " + e.getMessage());
+            doDelete();
+        }
         containerList = new Vector();
         addBehaviour(new ReceiveControllerInstruction());
     }
